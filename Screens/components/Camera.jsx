@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const CameraScreen = ({ onClose, onSnap }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
+  const [photo, setPhoto] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
 
   useEffect(() => {
@@ -33,6 +34,17 @@ const CameraScreen = ({ onClose, onSnap }) => {
           setCameraRef(ref);
         }}
       >
+        {photo && (
+          <View style={styles.recentPhoto}>
+            <Image
+              style={{ flex: 1 }}
+              source={{
+                uri: photo,
+              }}
+            />
+          </View>
+        )}
+
         <View style={styles.photoView}>
           <TouchableOpacity onPress={onClose} style={styles.iconClose}>
             <Ionicons name="close" size={36} color="#FFF" />
@@ -42,9 +54,11 @@ const CameraScreen = ({ onClose, onSnap }) => {
             onPress={async () => {
               if (cameraRef) {
                 const { uri } = await cameraRef.takePictureAsync();
+
                 await MediaLibrary.createAssetAsync(uri);
+                setPhoto(uri);
                 onSnap(uri);
-                onClose();
+                // onClose();
               }
             }}
           >
@@ -120,6 +134,17 @@ const styles = StyleSheet.create({
     top: 8,
     left: 35,
     zIndex: 20,
+  },
+  recentPhoto: {
+    position: "absolute",
+    top: 20,
+    left: 20,
+    borderColor: "white",
+    borderWidth: 0.5,
+    borderRadius: 10,
+    overflow: "hidden",
+    width: 100,
+    height: 100,
   },
 });
 

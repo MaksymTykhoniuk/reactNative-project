@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { Camera, CameraType } from "expo-camera";
-import * as MediaLibrary from "expo-media-library";
+
+import * as Location from "expo-location";
 import {
   Text,
   View,
@@ -55,14 +55,21 @@ const CreateScreen = ({ navigation }) => {
     setLocation("");
   };
 
+  const clearData = () => {
+    setName("");
+    setPhoto(null);
+    setLocation("");
+  };
+
   const handleSubmit = () => {
     if (name.trim() === "" || location.trim() === "") {
       Alert.alert("Заполните все поля");
       return;
     }
-    console.log("Name: ", name, "Location: ", location);
     hideKeyboard();
+    clearData();
     cleanForm();
+    navigation.navigate("DefaultScreen", { location, name, photo });
   };
 
   const switchShowCamera = () => {
@@ -112,6 +119,7 @@ const CreateScreen = ({ navigation }) => {
             style={{
               ...styles.loadedImage,
               paddingVertical: isShowKeyboard ? 45 : 70,
+              overflow: "hidden",
             }}
             source={{
               uri: photo,
@@ -171,6 +179,7 @@ const CreateScreen = ({ navigation }) => {
               value={location}
               onFocus={() => setIsShowKeyboard(true)}
               onChangeText={handleLocationChange}
+              // onPress={() => navigation.navigate("Map")}
             ></TextInput>
           </View>
         </KeyboardAvoidingView>
