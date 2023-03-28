@@ -179,7 +179,6 @@ const CreateScreen = ({ navigation }) => {
               value={location}
               onFocus={() => setIsShowKeyboard(true)}
               onChangeText={handleLocationChange}
-              // onPress={() => navigation.navigate("Map")}
             ></TextInput>
           </View>
         </KeyboardAvoidingView>
@@ -208,8 +207,11 @@ const CreateScreen = ({ navigation }) => {
             backgroundColor: "#FAFAFA",
             alignItems: "center",
             marginHorizontal: 140,
+
+            backgroundColor: condition ? "#FF6C00" : "#F6F6F6",
           }}
           activeOpacity={0.8}
+          onPress={clearData}
         >
           <Ionicons name="trash-bin-outline" size={24} color="#BDBDBD" />
         </TouchableOpacity>
