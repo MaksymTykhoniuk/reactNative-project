@@ -13,26 +13,15 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+import { authSignUp } from "../redux/auth/authActions";
+import { useDispatch } from "react-redux";
 
 const RegistrationScreen = ({ navigation }) => {
   const [login, setLogin] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [keyboardShown, setKeyboardShown] = useState(false);
 
-  useEffect(() => {
-    const showSection = Keyboard.addListener("keyboardDidShow", () => {
-      setKeyboardShown(true);
-    });
-    const hideSection = Keyboard.addListener("keyboardDidHide", () => {
-      setKeyboardShown(false);
-    });
-
-    return () => {
-      showSection.remove();
-      hideSection.remove();
-    };
-  }, []);
+  const dispatch = useDispatch();
 
   const loginHandler = (value) => setLogin(value);
   const emailHandler = (value) => setEmail(value);
@@ -48,7 +37,12 @@ const RegistrationScreen = ({ navigation }) => {
       Alert.alert("Заполните все поля");
       return;
     }
-    console.log({ login, email, password });
+    // console.log({ login, email, password });
+    dispatch(authSignUp({ login, email, password }));
+    clearForm();
+  };
+
+  const clearForm = () => {
     setLogin("");
     setEmail("");
     setPassword("");

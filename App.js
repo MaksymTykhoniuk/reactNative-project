@@ -6,7 +6,7 @@ import { StatusBar } from "expo-status-bar";
 import { store } from "./redux/store";
 
 export default function App() {
-  const routing = useRoute({});
+  const routing = useRoute(null);
 
   return (
     <>
