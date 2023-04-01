@@ -8,3 +8,5 @@ export const authSlice = createSlice({
   },
   reducers: {},
 });
+
+console.log(authSlice);

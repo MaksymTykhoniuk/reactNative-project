@@ -14,8 +14,11 @@ import {
   TouchableOpacity,
   Keyboard,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { authSignIn } from "../redux/auth/authActions";
 
 const LoginScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [keyboardShown, setKeyboardShown] = useState(false);
@@ -44,6 +47,7 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
     console.log({ email, password });
+    dispatch(authSignIn({ email, password }));
     setEmail("");
     setPassword("");
   };
