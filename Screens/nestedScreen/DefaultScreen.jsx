@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import {
   View,
@@ -9,9 +10,15 @@ import {
   Image,
   Button,
 } from "react-native";
+import { authSignOutUser } from "../../redux/auth/authActions";
 
 const DefaultScreen = ({ route, navigation }) => {
+  const dispatch = useDispatch();
   const [posts, setPosts] = useState([]);
+
+  const signOut = () => {
+    dispatch(authSignOutUser());
+  };
 
   useEffect(() => {
     if (route.params) {
@@ -26,7 +33,7 @@ const DefaultScreen = ({ route, navigation }) => {
         <TouchableOpacity
           style={styles.arrowBackIconWrapper}
           activeOpacity={0.8}
-          onPress={() => alert("kekw")}
+          onPress={signOut}
         >
           <Ionicons name="log-out-outline" size={32} color="#BDBDBD" />
         </TouchableOpacity>

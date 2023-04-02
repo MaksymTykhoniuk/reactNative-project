@@ -3,12 +3,27 @@ import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import firebase from "../../firebase/config";
 
 const CameraScreen = ({ onClose, onSnap }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [photo, setPhoto] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
+
+  const uploadPhotoToserver = async () => {
+    const response = await fetch(photo);
+    const file = await response.blob();
+
+    const uniquePostId = Date.now().toString();
+
+    const data = await firebase
+      .storage()
+      .ref(`postImage/${uniquePostId}`)
+      .put(file);
+
+    console.log("data", data);
+  };
 
   useEffect(() => {
     (async () => {
@@ -58,6 +73,7 @@ const CameraScreen = ({ onClose, onSnap }) => {
                 await MediaLibrary.createAssetAsync(uri);
                 setPhoto(uri);
                 onSnap(uri);
+                uploadPhotoToserver();
                 // onClose();
               }
             }}

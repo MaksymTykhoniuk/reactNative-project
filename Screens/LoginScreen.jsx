@@ -46,7 +46,7 @@ const LoginScreen = ({ navigation }) => {
       Alert.alert("Заполните все поля");
       return;
     }
-    console.log({ email, password });
+    // console.log({ email, password });
     dispatch(authSignIn({ email, password }));
     setEmail("");
     setPassword("");
