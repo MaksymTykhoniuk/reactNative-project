@@ -4,26 +4,14 @@ import * as MediaLibrary from "expo-media-library";
 import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import firebase from "../../firebase/config";
+import { useSelector } from "react-redux";
 
 const CameraScreen = ({ onClose, onSnap }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [photo, setPhoto] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
-
-  const uploadPhotoToserver = async () => {
-    const response = await fetch(photo);
-    const file = await response.blob();
-
-    const uniquePostId = Date.now().toString();
-
-    const data = await firebase
-      .storage()
-      .ref(`postImage/${uniquePostId}`)
-      .put(file);
-
-    console.log("data", data);
-  };
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -32,6 +20,39 @@ const CameraScreen = ({ onClose, onSnap }) => {
       setHasPermission(status === "granted");
     })();
   }, []);
+
+  useEffect(() => {
+    if (photo) {
+      uploadImageToStoradge();
+    }
+  }, [photo]);
+
+  const uploadImageToStoradge = async () => {
+    setUploading(true);
+    // onClose();
+    const uniquePostId = Date.now().toString();
+
+    const response = await fetch(photo);
+    const blob = await response.blob();
+    var ref = firebase.storage().ref(`postImage/${uniquePostId}`).put(blob);
+
+    try {
+      await ref;
+    } catch (error) {
+      console.log(error);
+    }
+
+    // const processedPhoto = await firebase
+    //   .storage()
+    //   .ref("postImage")
+    //   .child(uniquePostId)
+    //   .getDownloadURL();
+    // console.log(processedPhoto);
+    setUploading(false);
+    alert("image uploaded");
+
+    return processedPhoto;
+  };
 
   if (hasPermission === null) {
     return <View />;
@@ -43,6 +64,7 @@ const CameraScreen = ({ onClose, onSnap }) => {
   return (
     <View style={styles.container}>
       <Camera
+        ratio="1:1"
         style={styles.camera}
         type={type}
         ref={(ref) => {
@@ -61,7 +83,11 @@ const CameraScreen = ({ onClose, onSnap }) => {
         )}
 
         <View style={styles.photoView}>
-          <TouchableOpacity onPress={onClose} style={styles.iconClose}>
+          <TouchableOpacity
+            // onPress={uploadImageToStoradge}
+            onPress={onClose}
+            style={styles.iconClose}
+          >
             <Ionicons name="close" size={36} color="#FFF" />
           </TouchableOpacity>
           <TouchableOpacity
@@ -73,8 +99,6 @@ const CameraScreen = ({ onClose, onSnap }) => {
                 await MediaLibrary.createAssetAsync(uri);
                 setPhoto(uri);
                 onSnap(uri);
-                uploadPhotoToserver();
-                // onClose();
               }
             }}
           >

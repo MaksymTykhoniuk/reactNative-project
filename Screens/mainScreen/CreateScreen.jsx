@@ -18,12 +18,16 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import CameraScreen from "../components/Camera";
 
+import firebase from "../../firebase/config";
+import * as ImagePicker from "expo-image-picker";
+
 const CreateScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [name, setName] = useState("");
   const [photo, setPhoto] = useState(null);
   const [location, setLocation] = useState("");
   const [activeCamera, setActiveCamera] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const condition = name.trim() !== "" && location.trim() !== "";
 
@@ -42,8 +46,14 @@ const CreateScreen = ({ navigation }) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (photo) {
+      uploadImageToStoradge();
+    }
+  }, [photo]);
+
   const handleNameChange = (value) => setName(value);
-  const handleLocationChange = (value) => setLocation(value);
+  // const handleLocationChange = (value) => setLocation(value);
 
   const hideKeyboard = () => {
     setIsShowKeyboard(false);
@@ -72,12 +82,44 @@ const CreateScreen = ({ navigation }) => {
     navigation.navigate("DefaultScreen", { location, name, photo });
   };
 
+  const uploadImageToStoradge = async () => {
+    setUploading(true);
+
+    const uniquePostId = Date.now().toString();
+
+    const response = await fetch(photo);
+    const blob = await response.blob();
+    // const filename = image.substring(image.lastIndexOf("/") + 1);
+    var ref = firebase.storage().ref(`postImage/${uniquePostId}`).put(blob);
+
+    try {
+      await ref;
+    } catch (error) {
+      console.log(error);
+    }
+    setUploading(false);
+    alert("image uploaded");
+  };
+
   const switchShowCamera = () => {
     setActiveCamera(!activeCamera);
   };
 
   const getPhoto = (uri) => {
     setPhoto(uri);
+  };
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    const source = result.uri;
+    console.log(source);
+    setPhoto(source);
   };
 
   return activeCamera ? (
@@ -109,6 +151,7 @@ const CreateScreen = ({ navigation }) => {
           >
             <TouchableOpacity
               onPress={switchShowCamera}
+              // onPress={pickImage}
               style={styles.photoIcon}
             >
               <Ionicons name="camera" size={24} color="#BDBDBD" />
@@ -127,6 +170,7 @@ const CreateScreen = ({ navigation }) => {
           >
             <TouchableOpacity
               onPress={switchShowCamera}
+              // onPress={pickImage}
               style={{
                 ...styles.photoIcon,
                 opacity: !photo ? 1 : 0.5,
@@ -137,19 +181,26 @@ const CreateScreen = ({ navigation }) => {
           </ImageBackground>
         )}
 
-        <View>
-          {!photo ? (
-            <Text style={{ ...styles.addText, marginBottom: 48 }}>
-              Загрузите фото
-            </Text>
-          ) : (
-            <Text
-              onPress={() => setPhoto(null)}
-              style={{ ...styles.addText, marginBottom: 48 }}
-            >
-              Редактировать
-            </Text>
-          )}
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text
+            onPress={pickImage}
+            style={{ ...styles.addText, marginBottom: 48 }}
+          >
+            Загрузить фото из галереи
+          </Text>
+          {/* 
+          <Text
+            onPress={uploadImage}
+            style={{ ...styles.addText, marginBottom: 48 }}
+          >
+            Редактировать
+          </Text> */}
         </View>
 
         <KeyboardAvoidingView
@@ -178,7 +229,7 @@ const CreateScreen = ({ navigation }) => {
               placeholderTextColor="#BDBDBD"
               value={location}
               onFocus={() => setIsShowKeyboard(true)}
-              onChangeText={handleLocationChange}
+              // onChangeText={handleLocationChange}
             ></TextInput>
           </View>
         </KeyboardAvoidingView>
