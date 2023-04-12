@@ -2,7 +2,8 @@ import React from "react";
 import { View, Text, StyleSheet, StatusBar } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
-const MapScreen = () => {
+const MapScreen = ({ route, navigation }) => {
+  console.log(route.params);
   return (
     <View style={styles.container}>
       <MapView

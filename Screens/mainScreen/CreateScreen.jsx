@@ -25,11 +25,12 @@ const CreateScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [name, setName] = useState("");
   const [photo, setPhoto] = useState(null);
-  const [location, setLocation] = useState("");
+  // const [location, setLocation] = useState("");
+  const [locationText, setLocationText] = useState("");
   const [activeCamera, setActiveCamera] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  const condition = name.trim() !== "" && location.trim() !== "";
+  const condition = name.trim() !== "" && locationText.trim() !== "";
 
   useEffect(() => {
     const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
@@ -46,14 +47,14 @@ const CreateScreen = ({ navigation }) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (photo) {
-      uploadImageToStoradge();
-    }
-  }, [photo]);
+  // useEffect(() => {
+  //   if (photo) {
+  //     uploadImageToStoradge();
+  //   }
+  // }, [photo]);
 
   const handleNameChange = (value) => setName(value);
-  // const handleLocationChange = (value) => setLocation(value);
+  const handleLocationChange = (value) => setLocationText(value);
 
   const hideKeyboard = () => {
     setIsShowKeyboard(false);
@@ -71,15 +72,16 @@ const CreateScreen = ({ navigation }) => {
     setLocation("");
   };
 
-  const handleSubmit = () => {
-    if (name.trim() === "" || location.trim() === "") {
+  const handleSubmit = async () => {
+    if (name.trim() === "" || locationText.trim() === "") {
       Alert.alert("Заполните все поля");
       return;
     }
     hideKeyboard();
     clearData();
     cleanForm();
-    navigation.navigate("DefaultScreen", { location, name, photo });
+
+    await navigation.navigate("DefaultScreen", { location, name, photo });
   };
 
   const uploadImageToStoradge = async () => {
@@ -89,7 +91,6 @@ const CreateScreen = ({ navigation }) => {
 
     const response = await fetch(photo);
     const blob = await response.blob();
-    // const filename = image.substring(image.lastIndexOf("/") + 1);
     var ref = firebase.storage().ref(`postImage/${uniquePostId}`).put(blob);
 
     try {
@@ -97,6 +98,15 @@ const CreateScreen = ({ navigation }) => {
     } catch (error) {
       console.log(error);
     }
+
+    const processedPhoto = await firebase
+      .storage()
+      .ref("postImage")
+      .child(uniquePostId)
+      .getDownloadURL();
+
+    console.log("processedPhoto", processedPhoto);
+    setPhoto(processedPhoto);
     setUploading(false);
     alert("image uploaded");
   };
@@ -118,7 +128,7 @@ const CreateScreen = ({ navigation }) => {
     });
 
     const source = result.uri;
-    console.log(source);
+    console.log("source:", result);
     setPhoto(source);
   };
 
@@ -194,13 +204,13 @@ const CreateScreen = ({ navigation }) => {
           >
             Загрузить фото из галереи
           </Text>
-          {/* 
+
           <Text
-            onPress={uploadImage}
+            onPress={uploadImageToStoradge}
             style={{ ...styles.addText, marginBottom: 48 }}
           >
             Редактировать
-          </Text> */}
+          </Text>
         </View>
 
         <KeyboardAvoidingView
@@ -227,9 +237,9 @@ const CreateScreen = ({ navigation }) => {
               style={{ ...styles.inputText, paddingLeft: 25 }}
               placeholder="Местность..."
               placeholderTextColor="#BDBDBD"
-              value={location}
+              value={locationText}
               onFocus={() => setIsShowKeyboard(true)}
-              // onChangeText={handleLocationChange}
+              onChangeText={handleLocationChange}
             ></TextInput>
           </View>
         </KeyboardAvoidingView>
@@ -270,6 +280,13 @@ const CreateScreen = ({ navigation }) => {
     </TouchableWithoutFeedback>
   );
 };
+
+// const handlePostToServer = async () => {
+//   const post = await firebase
+//     .firestore()
+//     .collection("posts")
+//     .add({ photo, name, location: location.coords });
+// };
 
 const styles = StyleSheet.create({
   container: {

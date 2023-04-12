@@ -21,38 +21,36 @@ const CameraScreen = ({ onClose, onSnap }) => {
     })();
   }, []);
 
-  useEffect(() => {
-    if (photo) {
-      uploadImageToStoradge();
-    }
-  }, [photo]);
+  // useEffect(() => {
+  //   if (photo) {
+  //     uploadImageToStoradge();
+  //   }
+  // }, [photo]);
 
-  const uploadImageToStoradge = async () => {
-    setUploading(true);
-    // onClose();
-    const uniquePostId = Date.now().toString();
+  // const uploadImageToStoradge = async () => {
+  //   setUploading(true);
+  //   // onClose();
+  //   const uniquePostId = Date.now().toString();
 
-    const response = await fetch(photo);
-    const blob = await response.blob();
-    var ref = firebase.storage().ref(`postImage/${uniquePostId}`).put(blob);
+  //   const response = await fetch(photo);
+  //   const blob = await response.blob();
+  //   var ref = firebase.storage().ref(`postImage/${uniquePostId}`).put(blob);
 
-    try {
-      await ref;
-    } catch (error) {
-      console.log(error);
-    }
+  //   try {
+  //     await ref;
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
 
-    // const processedPhoto = await firebase
-    //   .storage()
-    //   .ref("postImage")
-    //   .child(uniquePostId)
-    //   .getDownloadURL();
-    // console.log(processedPhoto);
-    setUploading(false);
-    alert("image uploaded");
-
-    return processedPhoto;
-  };
+  //   // const processedPhoto = await firebase
+  //   //   .storage()
+  //   //   .ref("postImage")
+  //   //   .child(uniquePostId)
+  //   //   .getDownloadURL();
+  //   // console.log(processedPhoto);
+  //   setUploading(false);
+  //   alert("image uploaded");
+  // };
 
   if (hasPermission === null) {
     return <View />;
@@ -83,11 +81,7 @@ const CameraScreen = ({ onClose, onSnap }) => {
         )}
 
         <View style={styles.photoView}>
-          <TouchableOpacity
-            // onPress={uploadImageToStoradge}
-            onPress={onClose}
-            style={styles.iconClose}
-          >
+          <TouchableOpacity onPress={onClose} style={styles.iconClose}>
             <Ionicons name="close" size={36} color="#FFF" />
           </TouchableOpacity>
           <TouchableOpacity

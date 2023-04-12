@@ -80,7 +80,7 @@ const DefaultScreen = ({ route, navigation }) => {
 
               <View style={styles.locationWrapper}>
                 <Ionicons
-                  onPress={() => navigation.navigate("Map")}
+                  onPress={() => navigation.navigate("Map", { posts })}
                   style={styles.locationIcon}
                   name="location-outline"
                   size={24}

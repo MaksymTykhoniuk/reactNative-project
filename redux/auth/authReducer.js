@@ -4,6 +4,10 @@ const state = {
   userId: null,
   userName: null,
   stateChange: false,
+  location: {
+    longitude: 0,
+    latitude: 0,
+  },
 };
 
 export const authSlice = createSlice({
@@ -20,6 +24,14 @@ export const authSlice = createSlice({
       stateChange: payload.stateChange,
     }),
     authSignOut: () => state,
+
+    locationChange: (state, { payload }) => ({
+      ...state,
+      location: {
+        longitude: payload.longitude,
+        latitude: payload.latitude,
+      },
+    }),
   },
 });
 
