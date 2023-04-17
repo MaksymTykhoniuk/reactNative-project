@@ -25,12 +25,11 @@ const CreateScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [name, setName] = useState("");
   const [photo, setPhoto] = useState(null);
-  // const [location, setLocation] = useState("");
-  const [locationText, setLocationText] = useState("");
+  const [location, setLocation] = useState("");
   const [activeCamera, setActiveCamera] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  const condition = name.trim() !== "" && locationText.trim() !== "";
+  const condition = name.trim() !== "" && location.trim() !== "";
 
   useEffect(() => {
     const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
@@ -54,7 +53,7 @@ const CreateScreen = ({ navigation }) => {
   // }, [photo]);
 
   const handleNameChange = (value) => setName(value);
-  const handleLocationChange = (value) => setLocationText(value);
+  const handleLocationChange = (value) => setLocation(value);
 
   const hideKeyboard = () => {
     setIsShowKeyboard(false);
@@ -73,13 +72,14 @@ const CreateScreen = ({ navigation }) => {
   };
 
   const handleSubmit = async () => {
-    if (name.trim() === "" || locationText.trim() === "") {
+    if (name.trim() === "" || location.trim() === "") {
       Alert.alert("Заполните все поля");
       return;
     }
     hideKeyboard();
     clearData();
     cleanForm();
+    uploadImageToStoradge();
 
     await navigation.navigate("DefaultScreen", { location, name, photo });
   };
@@ -106,7 +106,7 @@ const CreateScreen = ({ navigation }) => {
       .getDownloadURL();
 
     console.log("processedPhoto", processedPhoto);
-    setPhoto(processedPhoto);
+    // setPhoto(processedPhoto);
     setUploading(false);
     alert("image uploaded");
   };
@@ -127,8 +127,8 @@ const CreateScreen = ({ navigation }) => {
       quality: 1,
     });
 
-    const source = result.uri;
-    console.log("source:", result);
+    const source = result.assets[0].uri;
+    console.log("source", source);
     setPhoto(source);
   };
 
@@ -237,7 +237,7 @@ const CreateScreen = ({ navigation }) => {
               style={{ ...styles.inputText, paddingLeft: 25 }}
               placeholder="Местность..."
               placeholderTextColor="#BDBDBD"
-              value={locationText}
+              value={location}
               onFocus={() => setIsShowKeyboard(true)}
               onChangeText={handleLocationChange}
             ></TextInput>

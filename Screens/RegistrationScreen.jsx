@@ -90,6 +90,7 @@ const RegistrationScreen = ({ navigation }) => {
               placeholderTextColor="#BDBDBD"
               placeholder="Адрес электронной почты"
               style={styles.input}
+              keyboardType="email-address"
             />
             <TextInput
               value={password}
