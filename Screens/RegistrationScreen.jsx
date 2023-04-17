@@ -17,13 +17,13 @@ import { authSignUp } from "../redux/auth/authActions";
 import { useDispatch } from "react-redux";
 
 const RegistrationScreen = ({ navigation }) => {
-  const [login, setLogin] = useState("");
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const dispatch = useDispatch();
 
-  const loginHandler = (value) => setLogin(value);
+  const userNameHandler = (value) => setUserName(value);
   const emailHandler = (value) => setEmail(value);
   const passwordHandler = (value) => setPassword(value);
   const handleLogIn = () => navigation.navigate("Login");
@@ -33,17 +33,21 @@ const RegistrationScreen = ({ navigation }) => {
   };
 
   const handleSubmit = () => {
-    if (login.trim() === "" || email.trim() === "" || password.trim() === "") {
+    if (
+      userName.trim() === "" ||
+      email.trim() === "" ||
+      password.trim() === ""
+    ) {
       Alert.alert("Заполните все поля");
       return;
     }
     // console.log({ login, email, password });
-    dispatch(authSignUp({ login, email, password }));
+    dispatch(authSignUp({ userName, email, password }));
     clearForm();
   };
 
   const clearForm = () => {
-    setLogin("");
+    setUserName("");
     setEmail("");
     setPassword("");
   };
@@ -78,8 +82,8 @@ const RegistrationScreen = ({ navigation }) => {
             </View>
             <Text style={styles.header}>Регистрация</Text>
             <TextInput
-              value={login}
-              onChangeText={loginHandler}
+              value={userName}
+              onChangeText={userNameHandler}
               placeholderTextColor="#BDBDBD"
               placeholder="Логин"
               style={styles.input}
@@ -91,6 +95,7 @@ const RegistrationScreen = ({ navigation }) => {
               placeholder="Адрес электронной почты"
               style={styles.input}
               keyboardType="email-address"
+              autoCapitalize="none"
             />
             <TextInput
               value={password}

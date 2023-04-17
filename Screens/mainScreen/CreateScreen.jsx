@@ -1,6 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-
-import * as Location from "expo-location";
 import {
   Text,
   View,
@@ -17,9 +15,10 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import CameraScreen from "../components/Camera";
-
 import firebase from "../../firebase/config";
 import * as ImagePicker from "expo-image-picker";
+import * as Location from "expo-location";
+import { useSelector } from "react-redux";
 
 const CreateScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
@@ -28,6 +27,10 @@ const CreateScreen = ({ navigation }) => {
   const [location, setLocation] = useState("");
   const [activeCamera, setActiveCamera] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [geo, setGeo] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+
+  const { userId, userName } = useSelector((state) => state.auth);
 
   const condition = name.trim() !== "" && location.trim() !== "";
 
@@ -44,6 +47,19 @@ const CreateScreen = ({ navigation }) => {
       showSubscription.remove();
       hideSubscription.remove();
     };
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setGeo(location);
+    })();
   }, []);
 
   // useEffect(() => {
@@ -79,9 +95,17 @@ const CreateScreen = ({ navigation }) => {
     hideKeyboard();
     clearData();
     cleanForm();
-    uploadImageToStoradge();
-
+    // uploadImageToStoradge();
+    uploadPostToServer();
     await navigation.navigate("DefaultScreen", { location, name, photo });
+  };
+
+  const uploadPostToServer = async () => {
+    const photo = await uploadImageToStoradge();
+    const createPost = await firebase
+      .firestore()
+      .collection("Posts")
+      .add({ photo, name, geo: geo.coords, userId, userName });
   };
 
   const uploadImageToStoradge = async () => {
@@ -109,6 +133,8 @@ const CreateScreen = ({ navigation }) => {
     // setPhoto(processedPhoto);
     setUploading(false);
     alert("image uploaded");
+
+    return processedPhoto;
   };
 
   const switchShowCamera = () => {

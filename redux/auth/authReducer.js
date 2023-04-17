@@ -2,12 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const state = {
   userId: null,
-  userName: null,
+  userName: "",
   stateChange: false,
-  location: {
-    longitude: 0,
-    latitude: 0,
-  },
+  // location: {
+  //   longitude: 0,
+  //   latitude: 0,
+  // },
 };
 
 export const authSlice = createSlice({
@@ -25,13 +25,13 @@ export const authSlice = createSlice({
     }),
     authSignOut: () => state,
 
-    locationChange: (state, { payload }) => ({
-      ...state,
-      location: {
-        longitude: payload.longitude,
-        latitude: payload.latitude,
-      },
-    }),
+    // locationChange: (state, { payload }) => ({
+    //   ...state,
+    //   location: {
+    //     longitude: payload.longitude,
+    //     latitude: payload.latitude,
+    //   },
+    // }),
   },
 });
 

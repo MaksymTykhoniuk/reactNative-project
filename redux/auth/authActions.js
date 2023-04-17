@@ -16,7 +16,7 @@ const authSignIn =
     }
   };
 const authSignUp =
-  ({ login, email, password }) =>
+  ({ userName, email, password }) =>
   async (dispatch, getState) => {
     try {
       await firebase.auth().createUserWithEmailAndPassword(email, password);

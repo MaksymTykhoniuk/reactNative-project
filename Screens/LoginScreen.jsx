@@ -74,6 +74,7 @@ const LoginScreen = ({ navigation }) => {
                 ...styles.input,
               }}
               keyboardType="email-address"
+              autoCapitalize="none"
             />
             <TextInput
               value={password}

@@ -39,7 +39,7 @@ const DefaultScreen = ({ route, navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.user}>
+      {/* <View style={styles.user}>
         <View style={styles.userItem}>
           <Image
             // source={require("../../img/itachi.jpg")}
@@ -51,7 +51,7 @@ const DefaultScreen = ({ route, navigation }) => {
             <Text style={styles.userEmail}>testEmail@gmail.com</Text>
           </View>
         </View>
-      </View>
+      </View> */}
 
       <FlatList
         style={styles.postsGallery}
