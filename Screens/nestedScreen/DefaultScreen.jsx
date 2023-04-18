@@ -11,24 +11,41 @@ import {
   Button,
 } from "react-native";
 import { authSignOutUser } from "../../redux/auth/authActions";
+import firebase from "../../firebase/config";
 
 const DefaultScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
   const [posts, setPosts] = useState([]);
+  const [exmp, setExmp] = useState([]);
+
+  const getAllPosts = async () => {
+    await firebase
+      .firestore()
+      .collection("Posts")
+      .onSnapshot((data) =>
+        setPosts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+      );
+  };
+
+  useEffect(() => {
+    getAllPosts();
+  }, []);
+
+  // console.log("exmp", exmp[0].geo);
 
   const signOut = () => {
     dispatch(authSignOutUser());
   };
 
-  useEffect(() => {
-    if (route.params) {
-      // const geoData = route.params.geoData;
-      setPosts((prevState) => [...prevState, route.params]);
-      // navigation.navigate("Map", {
-      //   geoData,
-      // });
-    }
-  }, [route.params]);
+  // useEffect(() => {
+  //   if (route.params) {
+  //     // const geoData = route.params.geoData;
+  //     setPosts((prevState) => [...prevState, route.params]);
+  //     // navigation.navigate("Map", {
+  //     //   geoData,
+  //     // });
+  //   }
+  // }, [route.params]);
 
   return (
     <View style={styles.container}>
@@ -84,7 +101,7 @@ const DefaultScreen = ({ route, navigation }) => {
 
               <View style={styles.locationWrapper}>
                 <Ionicons
-                  onPress={() => navigation.navigate("Map", { posts })}
+                  onPress={() => navigation.navigate("Map", { geo: item.geo })}
                   style={styles.locationIcon}
                   name="location-outline"
                   size={24}

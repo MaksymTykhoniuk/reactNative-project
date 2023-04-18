@@ -97,12 +97,7 @@ const CreateScreen = ({ navigation }) => {
     clearData();
     cleanForm();
     uploadPostToServer();
-    await navigation.navigate("DefaultScreen", {
-      location,
-      name,
-      photo,
-      geoData,
-    });
+    await navigation.navigate("DefaultScreen");
   };
 
   const uploadPostToServer = async () => {
@@ -110,7 +105,7 @@ const CreateScreen = ({ navigation }) => {
     const createPost = await firebase
       .firestore()
       .collection("Posts")
-      .add({ photo, name, geo: geo.coords, userId, userName });
+      .add({ photo, location, name, geo: geo.coords, userId, userName });
   };
 
   const uploadImageToStoradge = async () => {
@@ -160,6 +155,7 @@ const CreateScreen = ({ navigation }) => {
 
     const source = result.assets[0].uri;
     console.log("source", source);
+
     setPhoto(source);
   };
 
