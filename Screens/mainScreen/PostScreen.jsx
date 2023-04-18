@@ -9,7 +9,14 @@ const NestedScreen = createStackNavigator();
 
 const PostScreen = () => {
   return (
-    <NestedScreen.Navigator>
+    <NestedScreen.Navigator
+      screenOptions={{
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          borderTopColor: "#212121",
+        },
+      }}
+    >
       <NestedScreen.Screen
         options={{
           headerShown: false,
@@ -17,8 +24,20 @@ const PostScreen = () => {
         name="DefaultScreen"
         component={DefaultScreen}
       />
-      <NestedScreen.Screen name="Map" component={MapScreen} />
-      <NestedScreen.Screen name="Comments" component={CommentsScreen} />
+      <NestedScreen.Screen
+        name="Map"
+        component={MapScreen}
+        options={{
+          tabBarStyle: { display: "none" },
+        }}
+      />
+      <NestedScreen.Screen
+        name="Comments"
+        component={CommentsScreen}
+        options={{
+          tabBarStyle: { display: "none" },
+        }}
+      />
     </NestedScreen.Navigator>
   );
 };

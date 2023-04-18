@@ -16,7 +16,6 @@ import firebase from "../../firebase/config";
 const DefaultScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
   const [posts, setPosts] = useState([]);
-  const [exmp, setExmp] = useState([]);
 
   const getAllPosts = async () => {
     await firebase
@@ -30,8 +29,6 @@ const DefaultScreen = ({ route, navigation }) => {
   useEffect(() => {
     getAllPosts();
   }, []);
-
-  // console.log("exmp", exmp[0].geo);
 
   const signOut = () => {
     dispatch(authSignOutUser());
@@ -77,7 +74,7 @@ const DefaultScreen = ({ route, navigation }) => {
       <FlatList
         style={styles.postsGallery}
         data={posts}
-        keyExtractor={(item, idx) => idx.toString()}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.galleryItem}>
             <Image
@@ -91,7 +88,9 @@ const DefaultScreen = ({ route, navigation }) => {
             <View style={styles.postDetails}>
               <View style={styles.commentsWrapper}>
                 <Ionicons
-                  onPress={() => navigation.navigate("Comments")}
+                  onPress={() =>
+                    navigation.navigate("Comments", { postId: item.id })
+                  }
                   name="chatbubble-outline"
                   size={24}
                   color="black"
