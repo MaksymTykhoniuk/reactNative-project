@@ -22,7 +22,11 @@ const DefaultScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     if (route.params) {
+      // const geoData = route.params.geoData;
       setPosts((prevState) => [...prevState, route.params]);
+      // navigation.navigate("Map", {
+      //   geoData,
+      // });
     }
   }, [route.params]);
 

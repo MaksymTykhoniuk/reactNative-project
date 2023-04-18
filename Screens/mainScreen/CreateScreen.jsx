@@ -18,7 +18,10 @@ import CameraScreen from "../components/Camera";
 import firebase from "../../firebase/config";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { authSlice } from "../../redux/auth/authReducer";
+
+const { locationChange } = authSlice.actions;
 
 const CreateScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
@@ -29,9 +32,9 @@ const CreateScreen = ({ navigation }) => {
   const [uploading, setUploading] = useState(false);
   const [geo, setGeo] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [geoData, setGeoData] = useState({});
 
   const { userId, userName } = useSelector((state) => state.auth);
-
   const condition = name.trim() !== "" && location.trim() !== "";
 
   useEffect(() => {
@@ -59,14 +62,12 @@ const CreateScreen = ({ navigation }) => {
 
       let location = await Location.getCurrentPositionAsync({});
       setGeo(location);
+      setGeoData({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
     })();
   }, []);
-
-  // useEffect(() => {
-  //   if (photo) {
-  //     uploadImageToStoradge();
-  //   }
-  // }, [photo]);
 
   const handleNameChange = (value) => setName(value);
   const handleLocationChange = (value) => setLocation(value);
@@ -95,9 +96,13 @@ const CreateScreen = ({ navigation }) => {
     hideKeyboard();
     clearData();
     cleanForm();
-    // uploadImageToStoradge();
     uploadPostToServer();
-    await navigation.navigate("DefaultScreen", { location, name, photo });
+    await navigation.navigate("DefaultScreen", {
+      location,
+      name,
+      photo,
+      geoData,
+    });
   };
 
   const uploadPostToServer = async () => {
