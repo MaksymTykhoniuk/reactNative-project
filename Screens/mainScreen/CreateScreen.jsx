@@ -34,7 +34,8 @@ const CreateScreen = ({ navigation }) => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [geoData, setGeoData] = useState({});
 
-  const { userId, userName } = useSelector((state) => state.auth);
+  const { userId, userName, userPhoto } = useSelector((state) => state.auth);
+
   const condition = name.trim() !== "" && location.trim() !== "";
 
   useEffect(() => {
@@ -102,10 +103,15 @@ const CreateScreen = ({ navigation }) => {
 
   const uploadPostToServer = async () => {
     const photo = await uploadImageToStoradge();
-    const createPost = await firebase
-      .firestore()
-      .collection("Posts")
-      .add({ photo, location, name, geo: geo.coords, userId, userName });
+    const createPost = await firebase.firestore().collection("Posts").add({
+      photo,
+      location,
+      name,
+      geo: geo.coords,
+      userId,
+      userName,
+      userPhoto,
+    });
   };
 
   const uploadImageToStoradge = async () => {

@@ -46,6 +46,7 @@ const useRoute = (isAuth) => {
         options={{
           headerShown: false,
           title: "Публикации",
+
           tabBarIcon: ({ focused, size, color }) => (
             <Ionicons name="layers-outline" size={24} color="#212121" />
           ),

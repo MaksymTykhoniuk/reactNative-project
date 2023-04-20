@@ -11,18 +11,22 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   SafeAreaView,
+  Image,
   FlatList,
 } from "react-native";
 import firebase from "../../firebase/config";
+import { AntDesign } from "@expo/vector-icons";
 
-const CommentsScreen = ({ route }) => {
+const CommentsScreen = ({ route, navigation }) => {
   const id = route.params.postId;
+  const image = route.params.image;
   const { userName } = useSelector((state) => state.auth);
   const [comment, setComment] = useState("");
   const [allComments, setAllComments] = useState([]);
+  const [commentCount, setCommentCount] = useState(0);
 
   useEffect(() => {
-    getAllPosts();
+    getAllComments();
   }, []);
 
   const createComment = async () => {
@@ -40,22 +44,35 @@ const CommentsScreen = ({ route }) => {
     setComment("");
   };
 
-  const getAllPosts = async () => {
+  const getAllComments = async () => {
     firebase
       .firestore()
       .collection("Posts")
       .doc(id)
       .collection("Comments")
-      .onSnapshot((data) =>
-        setAllComments(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-      );
+      .onSnapshot((data) => {
+        // console.log("data", data.docs.length);
+        setCommentCount(data.docs.length);
+        setAllComments(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      });
   };
+
+  // data?.["_delegate"]?.["_snapshot"].docChanges.length;
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS == "ios" ? "padding" : "height"}
       style={styles.container}
     >
+      <View style={styles.galleryItem}>
+        <Image
+          source={{
+            uri: image,
+          }}
+          style={styles.galleryItemImage}
+        />
+      </View>
+
       <FlatList
         data={allComments}
         renderItem={({ item }) => (
@@ -73,7 +90,12 @@ const CommentsScreen = ({ route }) => {
           style={styles.input}
         />
         <TouchableOpacity onPress={handleSubmit} style={styles.sendBtn}>
-          <Text style={styles.sendLabel}>add comment</Text>
+          <AntDesign
+            style={styles.sendLabel}
+            name="arrowup"
+            size={24}
+            color="#FFF"
+          />
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -83,7 +105,6 @@ const CommentsScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
   },
   commentContainer: {
     borderWidth: 1,
@@ -93,27 +114,45 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   sendBtn: {
-    marginHorizontal: 30,
+    position: "relative",
+    bottom: 0,
+    left: 0,
     height: 40,
-    borderWidth: 2,
-    borderColor: "#20b2aa",
-    borderRadius: 10,
+    width: 40,
+    borderRadius: 100,
     marginTop: 20,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#FF6C00",
   },
   sendLabel: {
-    color: "#20b2aa",
-    fontSize: 20,
+    color: "#FFF",
   },
   inputContainer: {
+    flex: 1,
+    position: "absolute",
     marginHorizontal: 10,
   },
   input: {
     height: 50,
+    width: "100%",
     borderWidth: 1,
-    borderColor: "transparent",
+    borderColor: "green",
     borderBottomColor: "#20b2aa",
+    borderRadius: 30,
+  },
+  galleryItemImage: {
+    width: 360,
+    height: 200,
+    marginHorizontal: 16,
+    borderRadius: 12,
+    marginBottom: 8,
+  },
+  galleryItem: {
+    display: "flex",
+    alignItems: "center",
+    marginBottom: 32,
+    marginTop: 32,
   },
 });
 

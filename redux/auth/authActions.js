@@ -16,7 +16,7 @@ const authSignIn =
     }
   };
 const authSignUp =
-  ({ userName, email, password }) =>
+  ({ userName, email, password, userPhoto }) =>
   async (dispatch, getState) => {
     try {
       await firebase.auth().createUserWithEmailAndPassword(email, password);
@@ -25,13 +25,15 @@ const authSignUp =
 
       await user.updateProfile({
         displayName: userName,
+        photoURL: userPhoto,
       });
 
-      const { displayName, uid } = firebase.auth().currentUser;
+      const { displayName, uid, photoURL } = firebase.auth().currentUser;
 
       const userUpdateProfile = {
         userName: displayName,
         userId: uid,
+        userPhoto: photoURL,
       };
 
       dispatch(updateUserProfile(userUpdateProfile));

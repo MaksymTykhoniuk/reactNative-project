@@ -16,14 +16,36 @@ import firebase from "../../firebase/config";
 const DefaultScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
   const [posts, setPosts] = useState([]);
+  // const [allComments, setAllComments] = useState([]);
+
+  // const getAllComments = async () => {
+  //   if (posts !== []) {
+  //     for (let i = 0; i < posts.length; i += 1) {
+  //       // console.log("allComments", posts[i].id);
+  //       firebase
+  //         .firestore()
+  //         .collection("Posts")
+  //         .doc(posts[i].id)
+  //         .collection("Comments")
+  //         .onSnapshot((data) => {
+  //           console.log("data", data.docs.length);
+  //           setAllComments(data.docs.length);
+  //         });
+  //     }
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getAllComments();
+  // }, []);
 
   const getAllPosts = async () => {
     await firebase
       .firestore()
       .collection("Posts")
-      .onSnapshot((data) =>
-        setPosts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-      );
+      .onSnapshot((data) => {
+        setPosts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      });
   };
 
   useEffect(() => {
@@ -33,16 +55,6 @@ const DefaultScreen = ({ route, navigation }) => {
   const signOut = () => {
     dispatch(authSignOutUser());
   };
-
-  // useEffect(() => {
-  //   if (route.params) {
-  //     // const geoData = route.params.geoData;
-  //     setPosts((prevState) => [...prevState, route.params]);
-  //     // navigation.navigate("Map", {
-  //     //   geoData,
-  //     // });
-  //   }
-  // }, [route.params]);
 
   return (
     <View style={styles.container}>
@@ -57,26 +69,25 @@ const DefaultScreen = ({ route, navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {/* <View style={styles.user}>
-        <View style={styles.userItem}>
-          <Image
-            // source={require("../../img/itachi.jpg")}
-            style={styles.userImage}
-          />
-
-          <View>
-            <Text style={styles.userName}>Test Name</Text>
-            <Text style={styles.userEmail}>testEmail@gmail.com</Text>
-          </View>
-        </View>
-      </View> */}
-
       <FlatList
         style={styles.postsGallery}
         data={posts}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.galleryItem}>
+            <View style={styles.userContainer}>
+              <Image
+                style={styles.avatar}
+                source={{
+                  uri: item.userPhoto,
+                }}
+              />
+
+              <View style={styles.userInfo}>
+                <Text style={styles.userName}>{item.userName}</Text>
+              </View>
+            </View>
+
             <Image
               source={{
                 uri: item.photo,
@@ -89,7 +100,10 @@ const DefaultScreen = ({ route, navigation }) => {
               <View style={styles.commentsWrapper}>
                 <Ionicons
                   onPress={() =>
-                    navigation.navigate("Comments", { postId: item.id })
+                    navigation.navigate("Comments", {
+                      postId: item.id,
+                      image: item.photo,
+                    })
                   }
                   name="chatbubble-outline"
                   size={24}
@@ -237,6 +251,30 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     textDecorationLine: "underline",
     marginLeft: 4,
+  },
+  userPgotoProf: {
+    width: 40,
+    height: 40,
+  },
+  userContainer: {
+    display: "flex",
+    marginHorizontal: 16,
+    flexDirection: "row",
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+    resizeMode: "cover",
+    borderRadius: 16,
+    marginRight: 8,
+  },
+  userInfo: {
+    justifyContent: "center",
+  },
+  userName: {
+    fontSize: 13,
+    lineHeight: 15,
+    color: "#212121",
   },
 });
 

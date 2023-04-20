@@ -15,12 +15,16 @@ import {
 } from "react-native";
 import { authSignUp } from "../redux/auth/authActions";
 import { useDispatch } from "react-redux";
+import * as ImagePicker from "expo-image-picker";
+import firebase from "../firebase/config";
 
 const RegistrationScreen = ({ navigation }) => {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [userPhoto, setUserPhoto] = useState(null);
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const dispatch = useDispatch();
 
   const userNameHandler = (value) => setUserName(value);
@@ -32,6 +36,21 @@ const RegistrationScreen = ({ navigation }) => {
     Alert.alert("ПОпавсь????");
   };
 
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+      setIsShowKeyboard(true);
+    });
+
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+      setIsShowKeyboard(false);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+
   const handleSubmit = () => {
     if (
       userName.trim() === "" ||
@@ -42,7 +61,7 @@ const RegistrationScreen = ({ navigation }) => {
       return;
     }
     // console.log({ login, email, password });
-    dispatch(authSignUp({ userName, email, password }));
+    dispatch(authSignUp({ userName, email, password, userPhoto }));
     clearForm();
   };
 
@@ -50,6 +69,53 @@ const RegistrationScreen = ({ navigation }) => {
     setUserName("");
     setEmail("");
     setPassword("");
+  };
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    const source = result.assets[0].uri;
+    console.log("source", source);
+
+    if (source) {
+      await uploadImageToStoradge(source);
+    }
+  };
+
+  const uploadImageToStoradge = async (source) => {
+    setUploading(true);
+
+    const uniquePostId = Date.now().toString();
+
+    const response = await fetch(source);
+    const blob = await response.blob();
+    var ref = firebase
+      .storage()
+      .ref(`userProfilePhoto/${uniquePostId}`)
+      .put(blob);
+
+    try {
+      await ref;
+    } catch (error) {
+      console.log(error);
+    }
+
+    const processedPhoto = await firebase
+      .storage()
+      .ref("userProfilePhoto")
+      .child(uniquePostId)
+      .getDownloadURL();
+
+    console.log("processedPhoto", processedPhoto);
+    setUserPhoto(processedPhoto);
+    setUploading(false);
+    alert("image uploaded");
+    // return processedPhoto;
   };
 
   return (
@@ -63,23 +129,55 @@ const RegistrationScreen = ({ navigation }) => {
             behavior={Platform.OS == "ios" ? "padding" : "height"}
             style={styles.form}
           >
-            <View
-              style={[
-                styles.box,
-                {
-                  transform: [{ translateX: -35 }],
-                },
-              ]}
-            >
-              <View style={styles.iconContainer}>
-                <Ionicons
-                  name="ios-add-circle-outline"
-                  size={36}
-                  color="#FF6C00"
-                  onPress={handleAddProfileImg}
-                />
+            {!userPhoto ? (
+              <View
+                style={[
+                  styles.box,
+                  {
+                    transform: [{ translateX: -35 }],
+                  },
+                ]}
+              >
+                <View style={styles.iconContainer}>
+                  <Ionicons
+                    name="ios-add-circle-outline"
+                    size={36}
+                    color="#FF6C00"
+                    onPress={pickImage}
+                  />
+                </View>
               </View>
-            </View>
+            ) : (
+              <View
+                style={[
+                  styles.box,
+                  {
+                    transform: [{ translateX: -35 }],
+                  },
+                ]}
+              >
+                <ImageBackground
+                  style={[
+                    styles.boxPhoto,
+                    {
+                      overflow: "hidden",
+                    },
+                  ]}
+                  source={{
+                    uri: userPhoto,
+                  }}
+                />
+                <View style={styles.iconContainer}>
+                  <Ionicons
+                    name="ios-add-circle-outline"
+                    size={36}
+                    color="#000000"
+                    onPress={uploadImageToStoradge}
+                  />
+                </View>
+              </View>
+            )}
+
             <Text style={styles.header}>Регистрация</Text>
             <TextInput
               value={userName}
@@ -190,6 +288,13 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     marginRight: "auto",
     marginBottom: 80,
+  },
+
+  boxPhoto: {
+    width: 120,
+    height: 120,
+    backgroundColor: "#F6F6F6",
+    borderRadius: 16,
   },
 
   box: {

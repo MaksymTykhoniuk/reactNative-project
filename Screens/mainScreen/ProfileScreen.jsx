@@ -37,6 +37,20 @@ const ProfileScreen = () => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.galleryItem}>
+            <View style={styles.userContainer}>
+              <View style={styles.userInfo}>
+                <Image
+                  style={styles.avatar}
+                  source={{
+                    uri: item.userPhoto,
+                  }}
+                />
+
+                <View>
+                  <Text style={styles.userName}>{item.userName}</Text>
+                </View>
+              </View>
+            </View>
             <Image
               source={{
                 uri: item.photo,
@@ -53,8 +67,6 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   postsGallery: {
     paddingHorizontal: 16,
@@ -71,6 +83,27 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     borderRadius: 12,
     marginBottom: 8,
+  },
+  userContainer: {
+    display: "flex",
+    marginTop: 32,
+    marginHorizontal: 16,
+    flexDirection: "row",
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+    resizeMode: "cover",
+    borderRadius: 16,
+    marginRight: 8,
+  },
+  userInfo: {
+    justifyContent: "center",
+  },
+  userName: {
+    fontSize: 13,
+    lineHeight: 15,
+    color: "#212121",
   },
 });
 
