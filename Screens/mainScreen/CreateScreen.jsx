@@ -102,6 +102,7 @@ const CreateScreen = ({ navigation }) => {
   };
 
   const uploadPostToServer = async () => {
+    const date = Date.now().toString();
     const photo = await uploadImageToStoradge();
     const createPost = await firebase.firestore().collection("Posts").add({
       photo,
@@ -111,6 +112,7 @@ const CreateScreen = ({ navigation }) => {
       userId,
       userName,
       userPhoto,
+      date,
     });
   };
 
