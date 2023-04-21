@@ -81,6 +81,7 @@ const RegistrationScreen = ({ navigation }) => {
 
     const source = result.assets[0].uri;
     console.log("source", source);
+    setUserPhoto(source);
 
     if (source) {
       await uploadImageToStoradge(source);
@@ -167,14 +168,14 @@ const RegistrationScreen = ({ navigation }) => {
                     uri: userPhoto,
                   }}
                 />
-                <View style={styles.iconContainer}>
+                {/* <View style={styles.iconContainer}>
                   <Ionicons
                     name="ios-add-circle-outline"
                     size={36}
                     color="#000000"
                     onPress={uploadImageToStoradge}
                   />
-                </View>
+                </View> */}
               </View>
             )}
 
