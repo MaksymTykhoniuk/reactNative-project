@@ -46,7 +46,6 @@ const LoginScreen = ({ navigation }) => {
       Alert.alert("Заполните все поля");
       return;
     }
-    // console.log({ email, password });
     dispatch(authSignIn({ email, password }));
     setEmail("");
     setPassword("");
@@ -136,6 +135,8 @@ const styles = StyleSheet.create({
     fontSize: 30,
     alignSelf: "center",
     marginTop: 32,
+    fontFamily: "Roboto-Medium",
+
     marginBottom: 16,
   },
   input: {
@@ -146,6 +147,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     height: 50,
     borderRadius: 10,
+    fontFamily: "Roboto-Regular",
   },
 
   button: {
@@ -162,6 +164,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 18,
     color: "white",
+    fontFamily: "Roboto-Regular",
   },
   info: {
     fontSize: 16,
@@ -170,6 +173,8 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginLeft: "auto",
     marginRight: "auto",
+    fontFamily: "Roboto-Regular",
+
     marginBottom: 110,
   },
   buttonWrapper: {

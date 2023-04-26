@@ -20,7 +20,6 @@ import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import { useSelector, useDispatch } from "react-redux";
 import { authSlice } from "../../redux/auth/authReducer";
-
 const { locationChange } = authSlice.actions;
 
 const CreateScreen = ({ navigation }) => {
@@ -136,12 +135,7 @@ const CreateScreen = ({ navigation }) => {
       .ref("postImage")
       .child(uniquePostId)
       .getDownloadURL();
-
-    console.log("processedPhoto", processedPhoto);
-    // setPhoto(processedPhoto);
     setUploading(false);
-    alert("image uploaded");
-
     return processedPhoto;
   };
 
@@ -160,10 +154,7 @@ const CreateScreen = ({ navigation }) => {
       aspect: [4, 3],
       quality: 1,
     });
-
     const source = result.assets[0].uri;
-    console.log("source", source);
-
     setPhoto(source);
   };
 
@@ -196,7 +187,6 @@ const CreateScreen = ({ navigation }) => {
           >
             <TouchableOpacity
               onPress={switchShowCamera}
-              // onPress={pickImage}
               style={styles.photoIcon}
             >
               <Ionicons name="camera" size={24} color="#BDBDBD" />
@@ -215,7 +205,6 @@ const CreateScreen = ({ navigation }) => {
           >
             <TouchableOpacity
               onPress={switchShowCamera}
-              // onPress={pickImage}
               style={{
                 ...styles.photoIcon,
                 opacity: !photo ? 1 : 0.5,
@@ -238,13 +227,6 @@ const CreateScreen = ({ navigation }) => {
             style={{ ...styles.addText, marginBottom: 48 }}
           >
             Загрузить фото из галереи
-          </Text>
-
-          <Text
-            onPress={uploadImageToStoradge}
-            style={{ ...styles.addText, marginBottom: 48 }}
-          >
-            Редактировать
           </Text>
         </View>
 
@@ -316,13 +298,6 @@ const CreateScreen = ({ navigation }) => {
   );
 };
 
-// const handlePostToServer = async () => {
-//   const post = await firebase
-//     .firestore()
-//     .collection("posts")
-//     .add({ photo, name, location: location.coords });
-// };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -344,6 +319,8 @@ const styles = StyleSheet.create({
     zIndex: 999,
   },
   headerText: {
+    fontFamily: "Roboto-Medium",
+
     textAlign: "center",
     fontWeight: 500,
     fontSize: 17,
@@ -369,6 +346,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   addText: {
+    fontFamily: "Roboto-Regular",
+
     fontWeight: 400,
     fontSize: 16,
     lineHeight: 19,
@@ -376,6 +355,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   inputText: {
+    fontFamily: "Roboto-Regular",
+
     position: "relative",
     fontSize: 16,
     lineHeight: 19,
@@ -409,6 +390,8 @@ const styles = StyleSheet.create({
     left: 0,
   },
   text: {
+    fontFamily: "Roboto-Regular",
+
     color: "#FFF",
   },
   loadedImage: {

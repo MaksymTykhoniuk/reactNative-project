@@ -60,7 +60,6 @@ const RegistrationScreen = ({ navigation }) => {
       Alert.alert("Заполните все поля");
       return;
     }
-    // console.log({ login, email, password });
     dispatch(authSignUp({ userName, email, password, userPhoto }));
     clearForm();
   };
@@ -80,7 +79,6 @@ const RegistrationScreen = ({ navigation }) => {
     });
 
     const source = result.assets[0].uri;
-    console.log("source", source);
     setUserPhoto(source);
 
     if (source) {
@@ -112,11 +110,8 @@ const RegistrationScreen = ({ navigation }) => {
       .child(uniquePostId)
       .getDownloadURL();
 
-    console.log("processedPhoto", processedPhoto);
     setUserPhoto(processedPhoto);
     setUploading(false);
-    alert("image uploaded");
-    // return processedPhoto;
   };
 
   return (
@@ -168,14 +163,6 @@ const RegistrationScreen = ({ navigation }) => {
                     uri: userPhoto,
                   }}
                 />
-                {/* <View style={styles.iconContainer}>
-                  <Ionicons
-                    name="ios-add-circle-outline"
-                    size={36}
-                    color="#000000"
-                    onPress={uploadImageToStoradge}
-                  />
-                </View> */}
               </View>
             )}
 
@@ -241,6 +228,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   form: {
+    height: "50%",
     justifyContent: "flex-end",
     backgroundColor: "#FFFFFF",
     width: "100%",
@@ -252,6 +240,8 @@ const styles = StyleSheet.create({
   },
   header: {
     color: "#212121",
+    fontFamily: "Roboto-Medium",
+
     fontWeight: 500,
     fontSize: 30,
     alignSelf: "center",
@@ -265,6 +255,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     height: 50,
     borderRadius: 10,
+    fontFamily: "Roboto-Regular",
   },
 
   button: {
@@ -278,6 +269,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
+    fontFamily: "Roboto-Regular",
+
     lineHeight: 18,
     color: "white",
   },
@@ -287,6 +280,8 @@ const styles = StyleSheet.create({
     color: "#1B4371",
     marginTop: 16,
     marginLeft: "auto",
+    fontFamily: "Roboto-Regular",
+
     marginRight: "auto",
     marginBottom: 80,
   },

@@ -1,4 +1,5 @@
 import React from "react";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import LoginScreen from "./Screens/LoginScreen";
@@ -73,6 +74,7 @@ const useRoute = (isAuth) => {
       />
       <MainTab.Screen
         options={{
+          headerShown: false,
           tabBarIcon: ({ focused, size, color }) => (
             <Ionicons name="person-outline" size={24} color="#212121" />
           ),

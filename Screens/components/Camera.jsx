@@ -3,8 +3,6 @@ import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import firebase from "../../firebase/config";
-import { useSelector } from "react-redux";
 
 const CameraScreen = ({ onClose, onSnap }) => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -20,37 +18,6 @@ const CameraScreen = ({ onClose, onSnap }) => {
       setHasPermission(status === "granted");
     })();
   }, []);
-
-  // useEffect(() => {
-  //   if (photo) {
-  //     uploadImageToStoradge();
-  //   }
-  // }, [photo]);
-
-  // const uploadImageToStoradge = async () => {
-  //   setUploading(true);
-  //   // onClose();
-  //   const uniquePostId = Date.now().toString();
-
-  //   const response = await fetch(photo);
-  //   const blob = await response.blob();
-  //   var ref = firebase.storage().ref(`postImage/${uniquePostId}`).put(blob);
-
-  //   try {
-  //     await ref;
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-
-  //   // const processedPhoto = await firebase
-  //   //   .storage()
-  //   //   .ref("postImage")
-  //   //   .child(uniquePostId)
-  //   //   .getDownloadURL();
-  //   // console.log(processedPhoto);
-  //   setUploading(false);
-  //   alert("image uploaded");
-  // };
 
   if (hasPermission === null) {
     return <View />;

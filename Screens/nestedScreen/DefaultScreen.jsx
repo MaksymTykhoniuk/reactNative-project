@@ -16,33 +16,12 @@ import firebase from "../../firebase/config";
 const DefaultScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
   const [posts, setPosts] = useState([]);
-  // const [allComments, setAllComments] = useState([]);
-
-  // const getAllComments = async () => {
-  //   if (posts !== []) {
-  //     for (let i = 0; i < posts.length; i += 1) {
-  //       // console.log("allComments", posts[i].id);
-  //       firebase
-  //         .firestore()
-  //         .collection("Posts")
-  //         .doc(posts[i].id)
-  //         .collection("Comments")
-  //         .onSnapshot((data) => {
-  //           console.log("data", data.docs.length);
-  //           setAllComments(data.docs.length);
-  //         });
-  //     }
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getAllComments();
-  // }, []);
 
   const getAllPosts = async () => {
     await firebase
       .firestore()
       .collection("Posts")
+      .orderBy("date", "desc")
       .onSnapshot((data) => {
         setPosts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
       });
@@ -74,53 +53,61 @@ const DefaultScreen = ({ route, navigation }) => {
         data={posts}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.galleryItem}>
+          <View style={styles.gallery}>
             <View style={styles.userContainer}>
-              <Image
-                style={styles.avatar}
-                source={{
-                  uri: item.userPhoto,
-                }}
-              />
+              <Image source={{ uri: item.userPhoto }} style={styles.avatar} />
 
               <View style={styles.userInfo}>
                 <Text style={styles.userName}>{item.userName}</Text>
+
+                <Text style={styles.userEmail}>{item.userName}@mail.com</Text>
               </View>
             </View>
 
-            <Image
-              source={{
-                uri: item.photo,
-              }}
-              style={styles.galleryItemImage}
-            />
+            <View style={styles.galleryPost}>
+              <Image source={{ uri: item.photo }} style={styles.postImage} />
 
-            <Text style={styles.galleryItemNickname}>{item.name}</Text>
-            <View style={styles.postDetails}>
-              <View style={styles.commentsWrapper}>
-                <Ionicons
+              <Text style={styles.postName}>{item.name}</Text>
+
+              <View style={styles.postInfo}>
+                <TouchableOpacity
+                  style={styles.commentWrapper}
                   onPress={() =>
                     navigation.navigate("Comments", {
                       postId: item.id,
                       image: item.photo,
                     })
                   }
-                  name="chatbubble-outline"
-                  size={24}
-                  color="black"
-                />
-                <Text style={styles.commentsText}>0</Text>
-              </View>
+                >
+                  <Ionicons
+                    name="chatbubble-outline"
+                    size={24}
+                    color="#BDBDBD"
+                    style={styles.commentIcon}
+                  />
 
-              <View style={styles.locationWrapper}>
-                <Ionicons
-                  onPress={() => navigation.navigate("Map", { geo: item.geo })}
-                  style={styles.locationIcon}
-                  name="location-outline"
-                  size={24}
-                  color="#BDBDBD"
-                />
-                <Text style={styles.locationText}>{item.location}</Text>
+                  <Text style={styles.commentText}>
+                    {Math.ceil(Math.random() * 2.5)}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.locationWrapper}
+                  onPress={() =>
+                    navigation.navigate("Map", {
+                      geo: item.geo,
+                    })
+                  }
+                >
+                  <Ionicons
+                    name="location-outline"
+                    size={24}
+                    color="#BDBDBD"
+                    style={styles.locationIcon}
+                  />
+
+                  <Text style={styles.locationText}>{item.location}</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -144,6 +131,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     textAlign: "center",
+    fontFamily: "Roboto-Medium",
     fontWeight: 500,
     fontSize: 17,
     lineHeight: 22,
@@ -158,110 +146,65 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     zIndex: 999,
   },
-  postsGallery: {
-    paddingHorizontal: 16,
-    paddingVertical: 22,
-  },
-  galleryItem: {
-    display: "flex",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  galleryItemImage: {
-    width: 360,
-    height: 200,
+  gallery: {
     marginHorizontal: 16,
-    borderRadius: 12,
+  },
+  galleryPost: {
+    marginTop: 32,
+  },
+  postImage: {
+    height: 240,
+    borderRadius: 8,
     marginBottom: 8,
   },
-  galleryItemDescription: {
-    display: "flex",
-    flexDirection: "row",
-    marginHorizontal: 16,
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  galleryItemNickname: {
-    fontWeight: 700,
-    fontSize: 13,
-    lineHeight: 15,
-    color: "#212121",
-    marginRight: 80,
-  },
-  galleryItemEmail: {
-    fontWeight: 400,
-    fontSize: 11,
-    lineHeight: 13,
-    color: "rgba(33, 33, 33, 0.8)",
-  },
-  user: {
-    paddingHorizontal: 16,
-  },
-  userItem: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  userImage: {
-    width: 60,
-    height: 60,
-    marginRight: 8,
-    borderRadius: 16,
-    backgroundColor: "black",
-  },
-  userName: {
-    fontWeight: 700,
-    fontSize: 13,
-    lineHeight: 15,
-    color: "#212121",
-  },
-  userEmail: {
-    fontWeight: 400,
-    fontSize: 11,
-    lineHeight: 13,
-    color: "rgba(33, 33, 33, 0.8)",
-  },
-  postDetails: {
-    display: "flex",
-    flexDirection: "row",
-    marginHorizontal: 16,
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  commentsWrapper: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  commentsText: {
-    marginRight: 49,
-    color: "#BDBDBD",
+  postName: {
+    fontFamily: "Roboto-Medium",
     fontSize: 16,
     lineHeight: 19,
-    marginLeft: 6,
+    color: "#212121",
+    marginBottom: 8,
+  },
+  postInfo: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  commentWrapper: {
+    display: "flex",
+    justifyContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
   },
   locationWrapper: {
     display: "flex",
+    justifyContent: "center",
     flexDirection: "row",
     alignItems: "center",
+    gap: 4,
+  },
+  commentText: {
+    color: "#BDBDBD",
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+    lineHeight: 19,
   },
   locationText: {
     color: "#212121",
+    fontFamily: "Roboto-Regular",
+    textDecorationLine: "underline",
     fontSize: 16,
     lineHeight: 19,
-    textDecorationLine: "underline",
-    marginLeft: 4,
-  },
-  userPgotoProf: {
-    width: 40,
-    height: 40,
   },
   userContainer: {
     display: "flex",
-    marginHorizontal: 16,
+    marginTop: 32,
+    // marginHorizontal: 16,
     flexDirection: "row",
   },
   avatar: {
+    marginLeft: 0,
     width: 60,
     height: 60,
     resizeMode: "cover",
@@ -275,6 +218,13 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 15,
     color: "#212121",
+    fontFamily: "Roboto-Bold",
+  },
+  userEmail: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 11,
+    lineHeight: 13,
+    color: "rgba(33, 33, 33, 0.8)",
   },
 });
 
